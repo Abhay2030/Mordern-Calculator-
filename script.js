@@ -26,6 +26,7 @@ const functions = {
   tan: (x) => Math.tan(x),
   ln: (x) => Math.log(x),
   log: (x) => Math.log10(x),
+  exp: (x) => Math.exp(x),
   abs: (x) => Math.abs(x),
 };
 
@@ -75,6 +76,24 @@ function handleButtonClick(event) {
     case 'memory-clear':
       memoryClear();
       break;
+    case 'sin':
+      appendValue('sin(');
+      break;
+    case 'cos':
+      appendValue('cos(');
+      break;
+    case 'tan':
+      appendValue('tan(');
+      break;
+    case 'ln':
+      appendValue('ln(');
+      break;
+    case 'log':
+      appendValue('log(');
+      break;
+    case 'exp':
+      appendValue('exp(');
+      break;
     case 'sqrt':
       appendValue('sqrt(');
       break;
@@ -83,6 +102,12 @@ function handleButtonClick(event) {
       break;
     case 'percent':
       applyPercent();
+      break;
+    case 'pi':
+      appendValue('pi');
+      break;
+    case 'e':
+      appendValue('e');
       break;
     case 'parenthesis-left':
       appendParenthesis('(');
@@ -370,12 +395,18 @@ function tokenize(expression) {
         index += 1;
       }
 
-      if (!functions[name]) {
+      const lowerName = name.toLowerCase();
+      if (functions[lowerName]) {
+        tokens.push({ type: 'function', value: lowerName });
+      } else if (lowerName === 'pi') {
+        tokens.push({ type: 'number', value: Math.PI });
+      } else if (lowerName === 'e') {
+        tokens.push({ type: 'number', value: Math.E });
+      } else {
         throw new Error(`Unsupported function: ${name}`);
       }
 
-      tokens.push({ type: 'function', value: name });
-      lastType = 'function';
+      lastType = functions[lowerName] ? 'function' : 'number';
       continue;
     }
 
